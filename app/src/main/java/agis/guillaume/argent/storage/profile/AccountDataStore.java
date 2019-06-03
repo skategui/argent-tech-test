@@ -1,6 +1,6 @@
 package agis.guillaume.argent.storage.profile;
 
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.Coin;
 import androidx.annotation.Nullable;
 
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ public interface AccountDataStore {
      * Store the erc 20 tokens locally
      * @param tokens erc 20 tokens
      */
-    void setERC20TokensBalance(List<ERC20TokenUser> tokens);
+    void setERC20TokensBalance(List<Coin> tokens);
 
 
     /**
@@ -34,5 +34,5 @@ public interface AccountDataStore {
      * @return get the stored ERC 20 tokens , null otherwise
      */
     @Nullable
-    List<ERC20TokenUser> getERC20TokenBalance();
+    List<Coin> getERC20TokenBalance();
 }

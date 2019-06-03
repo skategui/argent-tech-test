@@ -1,7 +1,7 @@
 package agis.guillaume.argent.ui.list;
 
 import agis.guillaume.argent.R;
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.Coin;
 import agis.guillaume.argent.utils.DiffCallback;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -22,14 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adapter for the recyclerview that display the list of ERc 20 tokens associated to this account,
+ * Adapter for the recyclerview that display the list of owned coins associated to this account,
  * with their balance, in ETH
  */
 public class ListTokensAdapterImpl extends ListTokensAdapter {
 
 
     private DiffCallback callback;
-    private List<ERC20TokenUser> tokens = new ArrayList<>();
+    private List<Coin> tokens = new ArrayList<>();
     private LayoutInflater mInflater;
 
     /**
@@ -53,7 +53,7 @@ public class ListTokensAdapterImpl extends ListTokensAdapter {
 
     @Override
     public void onBindViewHolder(@NonNull TokenViewHolder holder, int position) {
-        ERC20TokenUser token = tokens.get(position);
+        Coin token = tokens.get(position);
         holder.update(token);
     }
 
@@ -68,7 +68,7 @@ public class ListTokensAdapterImpl extends ListTokensAdapter {
      * @param updatedTokenList latest version of the tokens list
      */
     @Override
-    void update(List<ERC20TokenUser> updatedTokenList) {
+    void update(List<Coin> updatedTokenList) {
         callback.compareLists(this.tokens, updatedTokenList);
         DiffUtil.DiffResult differenceFound = DiffUtil.calculateDiff(callback);
         this.tokens.clear();
@@ -97,7 +97,7 @@ public class ListTokensAdapterImpl extends ListTokensAdapter {
             ButterKnife.bind(this, itemView);
         }
 
-        void update(@NonNull ERC20TokenUser token) {
+        void update(@NonNull Coin token) {
 
             tvTokenName.setText(String.format(tvTokenName.getContext().getString(R.string.item_token_title), token.getName(), token.getSymbol()));
 
@@ -116,7 +116,7 @@ public class ListTokensAdapterImpl extends ListTokensAdapter {
                 tvAmount.setText(String.format(tvAmount.getContext().getString(R.string.item_token_nb), amount));
         }
 
-        private void displayBalanceETH(@NonNull ERC20TokenUser token) {
+        private void displayBalanceETH(@NonNull Coin token) {
             tvBalance.setVisibility(View.VISIBLE);
             ivInfo.setVisibility(View.GONE);
             tvBalance.setText(String.format(tvBalance.getResources().getString(R.string.account_amount_eth), token.getBalance()));

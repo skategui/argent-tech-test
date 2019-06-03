@@ -2,14 +2,14 @@ package agis.guillaume.argent.models;
 
 import java.math.BigDecimal;
 
-public final class ERC20TokenUser {
+public final class Coin {
 
     private final String name;
     private final String symbol;
     private final BigDecimal amount;
     private final BigDecimal balance;
 
-    public ERC20TokenUser(String name, String symbol, BigDecimal amount, BigDecimal balance) {
+    public Coin(String name, String symbol, BigDecimal amount, BigDecimal balance) {
         this.name = name;
         this.symbol = symbol;
         this.amount = amount;

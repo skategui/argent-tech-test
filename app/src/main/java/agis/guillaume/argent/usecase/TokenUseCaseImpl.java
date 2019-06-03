@@ -64,7 +64,7 @@ public class TokenUseCaseImpl implements TokenUseCase {
      * Return -1 if there is an error from the server, such as not pair not available for trading.
      * @param symbol Symbol associated to the pair to get the market info
      * @param amount amount of coins associated to this token
-     * @return [Single] [Double] rate found
+     * @return [Single] [Double] rate found, -1 if there was an error loading the rate.
      */
     @Override
     public Single<BigDecimal> getBalance(@NonNull String symbol, BigDecimal amount) {

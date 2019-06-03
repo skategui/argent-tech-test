@@ -50,47 +50,9 @@ public class AccountUseCaseImplTest extends BaseRule {
     }
 
     @Test
-    public void verifyEthBalanceIsCorrectWithoutMakingTheRequestsTwice() {
-        BigDecimal ethBalance = new BigDecimal(42);
-        BigDecimal expected = WeiUtils.convertWeiToETH(ethBalance);
-        when(repository.getETHBalance()).thenReturn(Single.just(ethBalance));
+    public void verifyCorrectCoinsAreLoaded() {
 
-        accountUseCase.getETHBalance()
-                .test()
-                .assertComplete()
-                .assertNoErrors()
-                .assertValue(expected);
-
-        accountUseCase.getETHBalance()
-                .test()
-                .assertComplete()
-                .assertNoErrors()
-                .assertValue(expected);
-
-
-        verify(accountDataStore, times(1)).setBalanceEth(expected);
-        verify(repository, times(1)).getETHBalance();
-    }
-
-    @Test
-    public void verifyCorrectERC20TokensBalanceIsProvided() {
-
-        BigDecimal expected = new BigDecimal(42);
-        when(tokenUseCase.isValidPairEth(any())).thenReturn(true);
-
-        when(tokenUseCase.getBalance(any(), any())).thenReturn(Single.just(expected));
-        List<ERC20TokenTx> tokens = DataBuilder.generateERC20Tokens();
-
-        ERC20TokenTx token = tokens.get(0);
-        when(tokenUseCase.isValidPairEth(eq(token.getTokenSymbol()))).thenReturn(true);
-
-        expected = expected.multiply(new BigDecimal(tokens.size()));
-
-        ERC20TokenResponse erc20TokenResponse = new ERC20TokenResponse();
-        erc20TokenResponse.setResult(tokens);
-
-
-        when(repository.getERC20Tokens()).thenReturn(Single.just(erc20TokenResponse));
+        BigDecimal expected = mockCoinsBuilder();
 
         accountUseCase.getTotalERC20TokenBalance()
                 .test()
@@ -98,27 +60,14 @@ public class AccountUseCaseImplTest extends BaseRule {
                 .assertNoErrors()
                 .assertValue(expected);
 
+        verify(repository, times(1)).getERC20Tokens();
+
     }
 
     @Test
-    public void verifyCorrectEthBalanceIsProvidedWithoutMakingTheRequestsTwice() {
+    public void verifyLoadCoinsOnlyOnceAndReuseLoadedCoins() {
 
-        BigDecimal expected = new BigDecimal(42);
-        when(tokenUseCase.isValidPairEth(any())).thenReturn(true);
-
-        when(tokenUseCase.getBalance(any(), any())).thenReturn(Single.just(expected));
-        List<ERC20TokenTx> tokens = DataBuilder.generateERC20Tokens();
-
-        ERC20TokenTx token = tokens.get(0);
-        when(tokenUseCase.isValidPairEth(eq(token.getTokenSymbol()))).thenReturn(true);
-
-        expected = expected.multiply(new BigDecimal(tokens.size()));
-
-        ERC20TokenResponse erc20TokenResponse = new ERC20TokenResponse();
-        erc20TokenResponse.setResult(tokens);
-
-
-        when(repository.getERC20Tokens()).thenReturn(Single.just(erc20TokenResponse));
+        BigDecimal expected = mockCoinsBuilder();
 
         accountUseCase.getTotalERC20TokenBalance()
                 .test()
@@ -133,5 +82,27 @@ public class AccountUseCaseImplTest extends BaseRule {
                 .assertValue(expected);
 
         verify(repository, times(1)).getERC20Tokens();
+
     }
+
+    // utils
+    private BigDecimal mockCoinsBuilder() {
+        BigDecimal expected = new BigDecimal(42);
+        when(tokenUseCase.isValidPairEth(any())).thenReturn(true);
+
+        when(tokenUseCase.getBalance(any(), any())).thenReturn(Single.just(expected));
+        List<ERC20TokenTx> tokens = DataBuilder.generateERC20Tokens();
+
+        ERC20TokenTx token = tokens.get(0);
+        when(tokenUseCase.isValidPairEth(eq(token.getTokenSymbol()))).thenReturn(true);
+
+        expected = expected.multiply(new BigDecimal(tokens.size()));
+
+        ERC20TokenResponse erc20TokenResponse = new ERC20TokenResponse();
+        erc20TokenResponse.setResult(tokens);
+
+        when(repository.getERC20Tokens()).thenReturn(Single.just(erc20TokenResponse));
+        return expected;
+    }
+
 }

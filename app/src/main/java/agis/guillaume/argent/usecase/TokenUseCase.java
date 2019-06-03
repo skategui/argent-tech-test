@@ -17,9 +17,9 @@ public interface TokenUseCase {
     boolean isValidPairEth(String symbol);
 
     /**
-     * Get the list of available pairs, format : BTC-ETH, in uppercase
+     * Get the list of available pairs, format : BTC_ETH, in uppercase
      *
-     * @return [Single] [List] [String] List of pairs available
+     * @return [Single] [List] [String] List of pairs available of the market
      */
     Single<List<String>> validPairs();
 

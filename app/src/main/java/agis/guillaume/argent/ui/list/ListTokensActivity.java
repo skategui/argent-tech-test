@@ -24,7 +24,7 @@ import static com.airbnb.lottie.LottieDrawable.INFINITE;
 import static com.airbnb.lottie.LottieDrawable.REVERSE;
 
 /**
- * View associated to the list of ERC 20 tokens with their balance
+ * View associated to the list of owned coin with their balance
  */
 public class ListTokensActivity extends BaseActivity {
 

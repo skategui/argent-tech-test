@@ -34,23 +34,22 @@ public class AccountViewModelTest extends BaseRule {
 
     @Before
     public void setUp() {
-        viewModel = new AccountViewModel.Factory(accountUseCase,
+        viewModel = spy(new AccountViewModel.Factory(accountUseCase,
                 new HttpErrorUtils())
-                .create(AccountViewModel.class);
+                .create(AccountViewModel.class));
 
         when(accountUseCase.getETHBalance()).thenReturn(Single.just(ethBalance));
         when(accountUseCase.getTotalERC20TokenBalance()).thenReturn(Single.just(erc20TokenBalance));
         when(accountUseCase.getETHBalanceLocally()).thenReturn(ethBalance);
         when(accountUseCase.getTotalERC20TokenBalanceLocally()).thenReturn(erc20TokenBalance);
+        when(viewModel.isApiProvided()).thenReturn(true);
+        when(viewModel.isAccountAddrProvided()).thenReturn(true);
+
 
     }
 
     @Test
     public void GivenNoApiKeyWhenLoadingTheDataThenEmitAnError() {
-
-        viewModel = spy(new AccountViewModel.Factory(accountUseCase,
-                new HttpErrorUtils())
-                .create(AccountViewModel.class));
 
         when(viewModel.isApiProvided()).thenReturn(false);
 
@@ -61,17 +60,13 @@ public class AccountViewModelTest extends BaseRule {
         AccountViewState state = testObserver
                 .assertNoErrors()
                 .values()
-                .get(0);
+                .get(2);
 
         assertThat(state instanceof ApiKeyNotProvided).isTrue();
     }
 
     @Test
     public void GivenNoAccountAddrWhenLoadingTheDataThenEmitAnError() {
-
-        viewModel = spy(new AccountViewModel.Factory(accountUseCase,
-                new HttpErrorUtils())
-                .create(AccountViewModel.class));
 
         when(viewModel.isAccountAddrProvided()).thenReturn(false);
 
@@ -82,7 +77,7 @@ public class AccountViewModelTest extends BaseRule {
         AccountViewState state = testObserver
                 .assertNoErrors()
                 .values()
-                .get(0);
+                .get(2);
 
         assertThat(state instanceof AccountViewState.AccountAddrProvided).isTrue();
     }

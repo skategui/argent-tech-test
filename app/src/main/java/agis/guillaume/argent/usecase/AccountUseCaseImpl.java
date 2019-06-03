@@ -1,14 +1,13 @@
 package agis.guillaume.argent.usecase;
 
-import agis.guillaume.argent.models.ERC20TokenBalance;
+import agis.guillaume.argent.models.Coin;
 import agis.guillaume.argent.models.ERC20TokenTx;
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.TokenWithBalance;
 import agis.guillaume.argent.models.requests.ERC20TokenResponse;
 import agis.guillaume.argent.repo.AccountRepository;
 import agis.guillaume.argent.storage.profile.AccountDataStore;
 import agis.guillaume.argent.utils.WeiUtils;
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -27,14 +26,15 @@ public class AccountUseCaseImpl implements AccountUseCase {
     private final AccountDataStore accountDataStore;
     private final TokenUseCase tokenUseCase;
 
-    private List<ERC20TokenUser> erc20TokenBalance = new ArrayList<>();
-    private BigDecimal ethBalance = null;
+    private List<Coin> coins = new ArrayList<>();
+
 
     /**
      * Default constructor, the params are provided by dagger
      *
+     * @param tokenUseCase      Responsible for the Token business logic
      * @param accountRepository Repository to get the data of the account remotely
-     * @param accountDataStore  Datastore to store locally the data associated to the profile
+     * @param accountDataStore  datastore to store locally the data associated to the account
      */
     @Inject
     AccountUseCaseImpl(TokenUseCase tokenUseCase,
@@ -47,14 +47,13 @@ public class AccountUseCaseImpl implements AccountUseCase {
 
 
     /**
-     * get the balance, in ETH, associated to this account. If the request has already been made,
-     * then use the balance already provided
+     * get the balance, in ETH, associated to this account
      *
      * @return [Single] [BigDecimal] balance in ETH
      */
     @Override
     public Single<BigDecimal> getETHBalance() {
-        return ethBalance != null ? Single.just(ethBalance) : getETHBalanceRemotely();
+        return getETHBalanceRemotely();
     }
 
     /**
@@ -70,14 +69,13 @@ public class AccountUseCaseImpl implements AccountUseCase {
 
 
     /**
-     * Check if the erc 20 tokens list in memory if empty or not to check if the
-     * data needs to be re-loaded from the server
+     * Get the list of coins for this account, from the server
      *
-     * @return [Single] [List] [ERC20TokenUser] erc 20 tokens list
+     * @return [Single] [List] [Coin] list of coins owned by the user
      */
     @Override
-    public Single<List<ERC20TokenUser>> getERC20Tokens() {
-        return erc20TokenBalance.isEmpty() ? getERC20TokensRemotely() : getERC20TokensLocally();
+    public Single<List<Coin>> loadOwnedCoins() {
+        return coins.isEmpty() ? getERC20TokensRemotely() : Single.just(coins);
     }
 
 
@@ -92,17 +90,17 @@ public class AccountUseCaseImpl implements AccountUseCase {
     }
 
     /**
-     * Get the aggregation of all the ERC tokens that has been stored locally
+     * Get the aggregation of all the ERC 20 tokens that has been stored locally
      *
      * @return [double] balance stored
      */
     @Override
     public BigDecimal getTotalERC20TokenBalanceLocally() {
 
-        List<ERC20TokenUser> tokens = accountDataStore.getERC20TokenBalance();
+        List<Coin> tokens = accountDataStore.getERC20TokenBalance();
         if (tokens == null || tokens.isEmpty())
             return new BigDecimal(0);
-         storeLocallyERC20Token(tokens);
+        storeLocallyERC20Token(tokens);
         return aggregateBalance(tokens);
     }
 
@@ -114,11 +112,10 @@ public class AccountUseCaseImpl implements AccountUseCase {
      * @param tokens list of tokens associated to this account
      * @return [double] aggregation of the balances.
      */
-    @VisibleForTesting
-    BigDecimal aggregateBalance(List<ERC20TokenUser> tokens) {
+    private BigDecimal aggregateBalance(List<Coin> tokens) {
         BigDecimal value = new BigDecimal(0.0);
 
-        for (ERC20TokenUser token : tokens) {
+        for (Coin token : tokens) {
             if (token.isAvailableForTrading()) {
                 value = value.add(token.getBalance());
             }
@@ -133,11 +130,11 @@ public class AccountUseCaseImpl implements AccountUseCase {
      */
     @Override
     public Single<BigDecimal> getTotalERC20TokenBalance() {
-        return getERC20Tokens()
+        return loadOwnedCoins()
                 .toObservable()
                 .flatMapIterable(it -> it)
-                .filter(ERC20TokenUser::isAvailableForTrading)
-                .map(ERC20TokenUser::getBalance)
+                .filter(Coin::isAvailableForTrading)
+                .map(Coin::getBalance)
                 .reduce(BigDecimal::add)
                 .toSingle();
 
@@ -151,7 +148,7 @@ public class AccountUseCaseImpl implements AccountUseCase {
      * @param erc20TokenTxList erc 20 tokens
      * @return created list of tokens with the balance
      */
-    private Single<List<ERC20TokenUser>> loadERC20TokenInformations(List<ERC20TokenTx> erc20TokenTxList) {
+    private Single<List<Coin>> loadERC20TokenInformations(List<ERC20TokenTx> erc20TokenTxList) {
         return tokenUseCase.validPairs()
                 .flatMap(it -> getBalancesByToken(erc20TokenTxList))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -162,7 +159,7 @@ public class AccountUseCaseImpl implements AccountUseCase {
                 .flatMap(coin -> tokenUseCase.getBalance(
                         coin.getSymbol(),
                         coin.getAmount()
-                        ).map(balance -> createItem(coin.getName(), coin.getSymbol(), coin.getAmount(), balance))
+                        ).map(balance -> createCoin(coin.getName(), coin.getSymbol(), coin.getAmount(), balance))
                                 .toObservable()
 
                 )
@@ -175,19 +172,19 @@ public class AccountUseCaseImpl implements AccountUseCase {
      * Create a list of transactions mapping the token and its balance
      *
      * @param erc20TokenTxList list of ERC 20 tokens from the current user
-     * @return [Single] [Collection]  [ERC20TokenBalance]  list created
+     * @return [Single] [Collection]  [TokenWithBalance]  list created
      */
-    private Single<Collection<ERC20TokenBalance>> getBalancesByToken(List<ERC20TokenTx> erc20TokenTxList) {
-        Map<String, ERC20TokenBalance> balances = new HashMap<>();
+    private Single<Collection<TokenWithBalance>> getBalancesByToken(List<ERC20TokenTx> erc20TokenTxList) {
+        Map<String, TokenWithBalance> balances = new HashMap<>();
         for (ERC20TokenTx currentTx : erc20TokenTxList) {
 
             BigDecimal balance = new BigDecimal(currentTx.getBalance());
             String symbol = currentTx.getTokenSymbol();
 
-            ERC20TokenBalance currentBalance = balances.get(symbol);
+            TokenWithBalance currentBalance = balances.get(symbol);
 
             if (currentBalance == null) {
-                currentBalance = new ERC20TokenBalance(currentTx.getTokenName(), currentTx.getTokenSymbol());
+                currentBalance = new TokenWithBalance(currentTx.getTokenName(), currentTx.getTokenSymbol());
             }
             if (currentTx.isTxMadeByUser()) {
                 currentBalance.removeToken(balance);
@@ -200,39 +197,21 @@ public class AccountUseCaseImpl implements AccountUseCase {
     }
 
 
-    /**
-     * Create the list of items that will be displayed in the list
-     *
-     * @return Created ERC20TokenUser
-     */
-    private ERC20TokenUser createItem(@NonNull String name,
-                                      @NonNull String symbol,
-                                      BigDecimal tokenNumber,
-                                      BigDecimal balance) {
-        return new ERC20TokenUser(
-                name,
-                symbol,
-                tokenNumber,
-                balance);
+    private Coin createCoin(@NonNull String name,
+                            @NonNull String symbol,
+                            BigDecimal tokenNumber,
+                            BigDecimal balance) {
+        return new Coin(name, symbol, tokenNumber, balance);
     }
 
-
-    /**
-     * Check if the erc 20 tokens list that has already been fetched from the server
-     *
-     * @return [Single] [List] [ERC20TokenUser] erc 20 tokens list
-     */
-    private Single<List<ERC20TokenUser>> getERC20TokensLocally() {
-        return Single.just(erc20TokenBalance);
-    }
 
     /**
      * Get the ERC 20 tokens list from the server
      *
-     * @return [Single] [List] [ERC20TokenUser] erc 20 tokens list
+     * @return [Single] [List] [Coin] erc 20 tokens list
      */
 
-    private Single<List<ERC20TokenUser>> getERC20TokensRemotely() {
+    private Single<List<Coin>> getERC20TokensRemotely() {
         return accountRepository.getERC20Tokens()
                 .map(ERC20TokenResponse::getResult)
                 .flatMap(this::loadERC20TokenInformations)
@@ -246,22 +225,17 @@ public class AccountUseCaseImpl implements AccountUseCase {
      */
     private void storeLocallyEthBalance(BigDecimal balance) {
         accountDataStore.setBalanceEth(balance);
-        ethBalance = balance;
     }
 
     /**
-     * Store the list of ERc tokens locally
+     * Store the list of coins owned by the user locally
      *
-     * @param tokens tokens to store to locally
+     * @param coins Coins to store to locally
      */
-    private void storeLocallyERC20Token(@NonNull List<ERC20TokenUser> tokens) {
-        accountDataStore.setERC20TokensBalance(tokens);
-        storeERC20Token(tokens);
-    }
-
-    private void storeERC20Token(@NonNull List<ERC20TokenUser> tokens) {
-        this.erc20TokenBalance.clear();
-        this.erc20TokenBalance.addAll(tokens);
+    private void storeLocallyERC20Token(@NonNull List<Coin> coins) {
+        accountDataStore.setERC20TokensBalance(coins);
+        this.coins.clear();
+        this.coins.addAll(coins);
     }
 
 

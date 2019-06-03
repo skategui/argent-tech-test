@@ -14,13 +14,14 @@ import io.reactivex.schedulers.Schedulers;
 
 import javax.inject.Inject;
 
+/**
+ * Responsible to load the data for the Account view
+ */
 public class AccountViewModel extends BaseViewModel<AccountViewState> {
 
 
     private final HttpErrorUtils httpErrorUtils;
     private final AccountUseCase accountUseCase;
-
-    private static final String VALUE_NOT_PROVIDED_DEFAULT_VALUE = "null";
 
 
     private AccountViewModel(AccountUseCase accountUseCase,
@@ -45,9 +46,11 @@ public class AccountViewModel extends BaseViewModel<AccountViewState> {
 
         boolean accountAddrProvided = isAccountAddrProvided();
 
+        emitViewState(new AccountViewState.DisplayAccountBalance(accountUseCase.getETHBalanceLocally()));
+        emitViewState(new AccountViewState.DisplayERC20Balance(accountUseCase.getTotalERC20TokenBalanceLocally()));
+
+
         if (apiKeyProvided && accountAddrProvided) {
-            emitViewState(new AccountViewState.DisplayAccountBalance(accountUseCase.getETHBalanceLocally()));
-            emitViewState(new AccountViewState.DisplayERC20Balance(accountUseCase.getTotalERC20TokenBalanceLocally()));
             loadData();
         }
         if (!apiKeyProvided)
@@ -63,7 +66,7 @@ public class AccountViewModel extends BaseViewModel<AccountViewState> {
      */
     @VisibleForTesting
     boolean isApiProvided() {
-        return !VALUE_NOT_PROVIDED_DEFAULT_VALUE.equals(BuildConfig.ETHERSCAN_API_KEY);
+        return !BuildConfig.ETHERSCAN_API_KEY.isEmpty();
     }
 
 
@@ -74,7 +77,7 @@ public class AccountViewModel extends BaseViewModel<AccountViewState> {
      */
     @VisibleForTesting
     boolean isAccountAddrProvided() {
-        return !VALUE_NOT_PROVIDED_DEFAULT_VALUE.equals(BuildConfig.ACCOUNT_ADDR);
+        return !BuildConfig.ACCOUNT_ADDR.isEmpty();
     }
 
     /**

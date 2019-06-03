@@ -4,7 +4,7 @@ import agis.guillaume.argent.DataBuilder;
 import agis.guillaume.argent.MainApplication;
 import agis.guillaume.argent.R;
 import agis.guillaume.argent.api.HttpErrorUtils;
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.Coin;
 import agis.guillaume.argent.ui.utils.RecyclerViewMatcher;
 import agis.guillaume.argent.usecase.AccountUseCase;
 import agis.guillaume.argent.utils.DiffCallback;
@@ -51,9 +51,9 @@ public class ListTokensActivityTest {
     @Test
     public void given_some_erc_20_tokens_then_display_the_valid_pairs_in_a_list() {
 
-        List<ERC20TokenUser> list = DataBuilder.getErc20TokensWithBalance();
+        List<Coin> list = DataBuilder.getErc20TokensWithBalance();
 
-        when(accountUseCase.getERC20Tokens()).thenReturn(Single.just(list));
+        when(accountUseCase.loadOwnedCoins()).thenReturn(Single.just(list));
 
         Activity activity = initDispatcherAndLaunchActivity();
 
@@ -63,7 +63,7 @@ public class ListTokensActivityTest {
         RecyclerViewMatcher matcher = new RecyclerViewMatcher(R.id.recyclerTokenView);
 
         for (int i = 0; i < list.size(); i++) {
-            ERC20TokenUser token = list.get(i);
+            Coin token = list.get(i);
             onView(matcher
                     .atPositionOnView(i, R.id.tvTokenName))
                     .check(matches(withText(String.format(
@@ -93,12 +93,12 @@ public class ListTokensActivityTest {
     @Test
     public void display_token_with_warning_icon() {
 
-        ERC20TokenUser token = new ERC20TokenUser("OMG", "OmiseGo", new BigDecimal(23123), new BigDecimal(-1));
+        Coin token = new Coin("OMG", "OmiseGo", new BigDecimal(23123), new BigDecimal(-1));
 
-        ArrayList<ERC20TokenUser> list = new ArrayList<>();
+        ArrayList<Coin> list = new ArrayList<>();
         list.add(token);
 
-        when(accountUseCase.getERC20Tokens()).thenReturn(Single.just(list));
+        when(accountUseCase.loadOwnedCoins()).thenReturn(Single.just(list));
 
         Activity activity = initDispatcherAndLaunchActivity();
 
@@ -128,7 +128,7 @@ public class ListTokensActivityTest {
 
     @Test
     public void given_no_tokens_then_display_a_message_for_empty_list() {
-        when(accountUseCase.getERC20Tokens()).thenReturn(Single.just(new ArrayList<>()));
+        when(accountUseCase.loadOwnedCoins()).thenReturn(Single.just(new ArrayList<>()));
         initDispatcherAndLaunchActivity();
 
         onView(withId(R.id.llState)).check(matches(isDisplayed()));

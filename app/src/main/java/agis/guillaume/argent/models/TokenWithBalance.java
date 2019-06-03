@@ -4,13 +4,14 @@ import agis.guillaume.argent.utils.WeiUtils;
 
 import java.math.BigDecimal;
 
-public final class ERC20TokenBalance {
+// used to store the tokens owned by the user and their balance
+public final class TokenWithBalance {
 
     private final String name;
     private final String symbol;
     private BigDecimal amount;
 
-    public ERC20TokenBalance(String name, String symbol) {
+    public TokenWithBalance(String name, String symbol) {
         this.name = name;
         this.symbol = symbol;
         amount = new BigDecimal(0);

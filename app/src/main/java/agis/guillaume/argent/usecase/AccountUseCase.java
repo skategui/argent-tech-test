@@ -1,6 +1,6 @@
 package agis.guillaume.argent.usecase;
 
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.Coin;
 import io.reactivex.Single;
 
 import java.math.BigDecimal;
@@ -22,12 +22,11 @@ public interface AccountUseCase {
     Single<BigDecimal> getTotalERC20TokenBalance();
 
     /**
-     * Check if the erc 20 tokens list in memory if empty or not to check if the
-     * data needs to be re-loaded from the server
+     * Get the list of coins owned by this account
      *
-     * @return [Single] [List] [ERC20TokenUser] erc 20 tokens list
+     * @return [Single] [List] [Coin] coins owned by the user
      */
-    Single<List<ERC20TokenUser>> getERC20Tokens();
+    Single<List<Coin>> loadOwnedCoins();
 
     /**
      * Get the balance in ETH associated to the user that has been stored locally

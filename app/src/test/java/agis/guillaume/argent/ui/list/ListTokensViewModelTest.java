@@ -2,7 +2,7 @@ package agis.guillaume.argent.ui.list;
 
 import agis.guillaume.argent.DataBuilder;
 import agis.guillaume.argent.api.HttpErrorUtils;
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.Coin;
 import agis.guillaume.argent.rule.BaseRule;
 import agis.guillaume.argent.ui.list.ListTokensViewState.DisplayTokensList;
 import agis.guillaume.argent.usecase.AccountUseCase;
@@ -27,7 +27,7 @@ public class ListTokensViewModelTest extends BaseRule {
     private ListTokensViewModel viewModel;
 
     private List<String> validPairs = DataBuilder.generatePairs();
-    private List<ERC20TokenUser> balanceByToken = DataBuilder.getErc20TokensWithBalance();
+    private List<Coin> balanceByToken = DataBuilder.getErc20TokensWithBalance();
 
 
     @Before
@@ -35,7 +35,7 @@ public class ListTokensViewModelTest extends BaseRule {
         viewModel = new ListTokensViewModel.Factory(accountUseCase, new HttpErrorUtils())
                 .create(ListTokensViewModel.class);
 
-        when(accountUseCase.getERC20Tokens()).thenReturn(Single.just(balanceByToken));
+        when(accountUseCase.loadOwnedCoins()).thenReturn(Single.just(balanceByToken));
 
     }
 
@@ -65,11 +65,11 @@ public class ListTokensViewModelTest extends BaseRule {
                 .get(1);
 
         assertThat(displayListState instanceof DisplayTokensList).isTrue();
-        List<ERC20TokenUser> list = ((DisplayTokensList) displayListState).getList();
+        List<Coin> list = ((DisplayTokensList) displayListState).getList();
         assertThat(list.size()).isEqualTo(balanceByToken.size());
 
-        for (ERC20TokenUser erc20TokenUser : list) {
-            assertThat(balanceByToken.contains(erc20TokenUser)).isTrue();
+        for (Coin coin : list) {
+            assertThat(balanceByToken.contains(coin)).isTrue();
         }
     }
 
@@ -79,7 +79,7 @@ public class ListTokensViewModelTest extends BaseRule {
         String errorMSg = "msg";
         Exception exception = new Exception(errorMSg);
 
-        when(accountUseCase.getERC20Tokens()).thenReturn(Single.error(exception));
+        when(accountUseCase.loadOwnedCoins()).thenReturn(Single.error(exception));
 
         TestObserver<ListTokensViewState> testObserver = viewModel.getViewStateObservable().test();
 
@@ -103,7 +103,7 @@ public class ListTokensViewModelTest extends BaseRule {
         String errorMSg = "msg";
         Exception exception = new UnknownHostException(errorMSg);
 
-        when(accountUseCase.getERC20Tokens()).thenReturn(Single.error(exception));
+        when(accountUseCase.loadOwnedCoins()).thenReturn(Single.error(exception));
 
         TestObserver<ListTokensViewState> testObserver = viewModel.getViewStateObservable().test();
 

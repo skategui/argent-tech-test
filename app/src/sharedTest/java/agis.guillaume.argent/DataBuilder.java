@@ -1,7 +1,7 @@
 package agis.guillaume.argent;
 
+import agis.guillaume.argent.models.Coin;
 import agis.guillaume.argent.models.ERC20TokenTx;
-import agis.guillaume.argent.models.ERC20TokenUser;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,11 +47,11 @@ public class DataBuilder {
         return tokens;
     }
 
-    public static List<ERC20TokenUser> getErc20TokensWithBalance() {
-        ERC20TokenUser btc = new ERC20TokenUser("Bitcoin", "BTC", new BigDecimal(2), new BigDecimal(10));
-        ERC20TokenUser omg = new ERC20TokenUser("OmiseGo", "OMG", new BigDecimal(2), new BigDecimal(10));
-        ERC20TokenUser xvg = new ERC20TokenUser("Verge", "XVG", new BigDecimal(20), new BigDecimal(1));
-        List<ERC20TokenUser> list = new ArrayList<>();
+    public static List<Coin> getErc20TokensWithBalance() {
+        Coin btc = new Coin("Bitcoin", "BTC", new BigDecimal(2), new BigDecimal(10));
+        Coin omg = new Coin("OmiseGo", "OMG", new BigDecimal(2), new BigDecimal(10));
+        Coin xvg = new Coin("Verge", "XVG", new BigDecimal(20), new BigDecimal(1));
+        List<Coin> list = new ArrayList<>();
         list.add(btc);
         list.add(omg);
         list.add(xvg);

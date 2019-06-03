@@ -1,6 +1,6 @@
 package agis.guillaume.argent.storage.profile;
 
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.Coin;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,7 +55,7 @@ public class AccountDataStoreImpl implements AccountDataStore {
      * @param tokens erc 20 tokens
      */
     @Override
-    public void setERC20TokensBalance(@NonNull List<ERC20TokenUser> tokens) {
+    public void setERC20TokensBalance(@NonNull List<Coin> tokens) {
         preferences.edit()
                 .putString(ERC20_TOKENS, gson.toJson(tokens))
                 .apply();
@@ -81,11 +81,11 @@ public class AccountDataStoreImpl implements AccountDataStore {
      */
     @Nullable
     @Override
-    public List<ERC20TokenUser> getERC20TokenBalance() {
+    public List<Coin> getERC20TokenBalance() {
         String content = preferences.getString(ERC20_TOKENS, null);
         if (content == null)
             return null;
-        return gson.fromJson(content, new TypeToken<ArrayList<ERC20TokenUser>>() {
+        return gson.fromJson(content, new TypeToken<ArrayList<Coin>>() {
         }.getType());
     }
 }

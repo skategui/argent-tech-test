@@ -2,7 +2,7 @@ package agis.guillaume.argent.ui.list;
 
 import agis.guillaume.argent.api.HttpErrorUtils;
 import agis.guillaume.argent.common.BaseViewModel;
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.Coin;
 import agis.guillaume.argent.usecase.AccountUseCase;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * ViewModel responsible to load the list of valid pair against ETH
- * given the list of ERC 20 tokens for this account
+ * given the list of owned coins for this account
  */
 public class ListTokensViewModel extends BaseViewModel<ListTokensViewState> {
 
@@ -43,18 +43,17 @@ public class ListTokensViewModel extends BaseViewModel<ListTokensViewState> {
      */
     @Override
     public void onCreate(@NonNull LifecycleOwner owner) {
-        loadERC20TokenUser();
+        loadUserCoins();
     }
 
 
     /**
-     * Take the list of transactions from this account and create a mapping balance=token available
-     * and generate a list that will be displayed in the UI
+     * Get the list of coins owned by the user
      */
 
-    private void loadERC20TokenUser() {
+    private void loadUserCoins() {
         disposables.add(
-                accountUseCase.getERC20Tokens()
+                accountUseCase.loadOwnedCoins()
                         .doOnSubscribe(t -> emitViewState(new ListTokensViewState.ShowLoading()))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
@@ -68,7 +67,7 @@ public class ListTokensViewModel extends BaseViewModel<ListTokensViewState> {
      *
      * @param list list to emit
      */
-    private void success(List<ERC20TokenUser> list) {
+    private void success(List<Coin> list) {
         if (list.isEmpty())
             emitViewState(new ListTokensViewState.DisplayEmptyListMessage());
         else
@@ -77,7 +76,7 @@ public class ListTokensViewModel extends BaseViewModel<ListTokensViewState> {
 
 
     /**
-     * Check if the type of error to throw the correct error asociated to the given Throwable
+     * Check if the type of error to throw the correct error associated to the given Throwable
      *
      * @param throwable throwable thrown
      */

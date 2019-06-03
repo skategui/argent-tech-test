@@ -1,6 +1,6 @@
 package agis.guillaume.argent.ui.list;
 
-import agis.guillaume.argent.models.ERC20TokenUser;
+import agis.guillaume.argent.models.Coin;
 
 import java.util.List;
 
@@ -11,13 +11,13 @@ import java.util.List;
 class ListTokensViewState {
 
     public final static class DisplayTokensList extends ListTokensViewState {
-        private List<ERC20TokenUser> list;
+        private List<Coin> list;
 
-        DisplayTokensList(List<ERC20TokenUser> list) {
+        DisplayTokensList(List<Coin> list) {
             this.list = list;
         }
 
-        public List<ERC20TokenUser> getList() {
+        public List<Coin> getList() {
             return list;
         }
     }
