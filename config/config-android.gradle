@@ -1,0 +1,42 @@
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// COMMON ANDROID CONFIG SETTINGS THAT CAN BE SHARED WITH FUTURES MODULE                          //
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+android {
+    compileSdkVersion versions.targetSdk
+    buildToolsVersion versions.buildTools
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        animationsDisabled = true
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    sourceSets {
+        String sharedTestJavaDir = 'src/sharedTest/java'
+
+        test {
+            java.srcDirs += [sharedTestJavaDir]
+        }
+
+        androidTest {
+            java.srcDirs += [sharedTestJavaDir]
+            java.srcDirs += 'src/androidTest/java'
+        }
+    }
+}

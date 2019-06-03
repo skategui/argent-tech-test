@@ -1,0 +1,30 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Config                                                                                         //
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Config {
+    Properties variablesProperties
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Pull in config properties                                                                      //
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ext {
+    config = new Config()
+    def basePath = rootDir.absolutePath + "/config/"
+
+    config.variablesProperties = new Properties()
+    def commonPropertiesFileName = "variables.properties"
+    config.variablesProperties.load(new FileInputStream(rootProject.file((basePath + commonPropertiesFileName))))
+}
+
+
+android {
+    defaultConfig {
+        buildConfigField "String", "ACCOUNT_ADDR", "\"${config.variablesProperties.etn_account_addr}\""
+        buildConfigField "String", "ETHERSCAN_API_KEY", "\"${config.variablesProperties.etherscan_api_key}\""
+        buildConfigField "String", "ETHERSCAN_BASE_URL", "\"${config.variablesProperties.etherscan_base_url}\""
+        buildConfigField "String", "SHAPESHIFT_BASE_URL", "\"${config.variablesProperties.shapeshift_base_url}\""
+    }
+}

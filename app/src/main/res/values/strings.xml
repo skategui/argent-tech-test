@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Argent Tech Test</string>
+    <string name="error_try_again_later">An error occurred. Please try again later</string>
+    <string name="loading_in_progress">Loading in progress</string>
+    <string name="error_no_token_available">No Token available for now</string>
+    <string name="error_no_internet_connexion">You are not connected to internet</string>
+    <string name="refresh">Refresh</string>
+    <string name="view_more">View more</string>
+    <string name="error_api_key_not_found">Api key not provided in settings</string>
+    <string name="error_account_addr_not_found">Account addr not provided in settings</string>
+    <string name="account_amount_eth" translatable="false">%.2f ETH</string>
+    <string name="account_balance_title">Account balance</string>
+    <string name="account_erc20_balance">ERC-20 Balance</string>
+    <string name="tokens_list_title">ERC-20 Tokens</string>
+    <string name="close">close</string>
+    <string name="item_token_nb">%.6f tokens</string>
+    <string name="item_no_token">no token</string>
+    <string name="item_token_title">%s (%s)</string>
+    <string name="item_token_error">Information not available</string>
+
+</resources>

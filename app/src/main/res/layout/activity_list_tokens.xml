@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:id="@+id/toolbar"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:background="@color/colorPrimary"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/tokens_list_title"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/title_textsize"/>
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerTokenView"
+            android:layout_below="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/list_token_recyclerview_padding_bottom"/>
+
+    <LinearLayout
+            android:id="@+id/llState"
+            android:layout_width="@dimen/list_token_width_width"
+            android:gravity="center_horizontal"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <TextView
+                android:id="@+id/tvStateTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/loading_in_progress"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_textsize"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation"
+                android:layout_width="@dimen/list_token_animation_size"
+                android:layout_height="@dimen/list_token_animation_size"
+                android:layout_marginTop="@dimen/list_token_animation_margin_top"
+                android:scaleType="centerCrop"
+                app:lottie_rawRes="@raw/loading_animation"/>
+
+
+    </LinearLayout>
+
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/list_token_shadow_height"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/shadow_white"/>
+
+</RelativeLayout>

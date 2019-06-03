@@ -1,0 +1,33 @@
+apply plugin: 'com.android.application'
+apply from: '../config/config-android.gradle'
+apply from: '../config/config-properties.gradle'
+
+android {
+    defaultConfig {
+        applicationId "guillaume.agis.argent"
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "agis.guillaume.argent.runner.EspressoTestRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+}
+
+dependencies {
+    kotlin()
+    dagger()
+    networking()
+    rx()
+    architectureComponents()
+    view()
+    testing()
+}

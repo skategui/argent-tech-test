@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- *View Attribute -->
+    <dimen name="title_textsize">16sp</dimen>
+    <dimen name="btn_height">40dp</dimen>
+    <dimen name="btn_textsize">16sp</dimen>
+    <dimen name="btn_radius">10dp</dimen>
+
+    <!-- Account -->
+    <dimen name="account_header_height">250dp</dimen>
+    <dimen name="account_header_title_textsize">18sp</dimen>
+    <dimen name="account_header_eth_balance_textsize">30sp</dimen>
+    <dimen name="account_header_eth_balance_margintop">12dp</dimen>
+    <dimen name="account_header_eth_logo_margintop">8dp</dimen>
+    <dimen name="account_header_eth_logo_marginbottom">8dp</dimen>
+    <dimen name="account_header_eth_logo_margin_left">12dp</dimen>
+    <dimen name="account_body_erc20tokens_margintop">150dp</dimen>
+    <dimen name="account_body_erc20tokens_title_textsize">14sp</dimen>
+    <dimen name="account_body_erc20tokens_balance_margintop">12dp</dimen>
+    <dimen name="account_body_erc20tokens_balance_textsize">24sp</dimen>
+    <dimen name="account_body_erc20tokens_cta_margintop">48dp</dimen>
+    <dimen name="account_state_margintop">48dp</dimen>
+
+    <!-- ERC 20 tokens -->
+    <dimen name="list_token_animation_size">150dp</dimen>
+    <dimen name="list_token_shadow_height">48dp</dimen>
+    <dimen name="list_token_animation_margin_top">48dp</dimen>
+    <dimen name="list_token_width_width">200dp</dimen>
+    <dimen name="list_token_recyclerview_padding_bottom">24dp</dimen>
+
+    <!-- Error dialog -->
+    <dimen name="dialog_title_margin_top">58dp</dimen>
+    <dimen name="dialog_cta_width">150dp</dimen>
+    <dimen name="dialog_cta_margin_top">48dp</dimen>
+    <dimen name="dialog_close_btn_height">48dp</dimen>
+    <dimen name="dialog_close_btn_margin_top">33dp</dimen>
+    <dimen name="dialog_close_btn_margin_bottom">24dp</dimen>
+
+    <!-- Token row -->
+    <dimen name="item_name_height">24dp</dimen>
+    <dimen name="item_name_width">200dp</dimen>
+    <dimen name="item_balance_height">20dp</dimen>
+    <dimen name="item_name_textsize">14sp</dimen>
+    <dimen name="item_amount_height">24dp</dimen>
+    <dimen name="item_content_padding">16dp</dimen>
+    <dimen name="item_token_margin_hor">16dp</dimen>
+    <dimen name="item_balance_margin_top">6dp</dimen>
+    <dimen name="item_info_icon_size">24dp</dimen>
+
+
+</resources>
